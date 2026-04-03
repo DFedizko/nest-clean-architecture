@@ -1,22 +1,19 @@
-import { Injectable } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { Project } from '../entities/project.entity'
-import { Repository } from 'typeorm'
+import { Inject, Injectable } from '@nestjs/common'
 import { StartProjectDto } from '../dto/start-project.dto'
+import type { IProjectRepository } from '../repositories/project-repository.interface'
 
 @Injectable()
 export class StartProjectUseCase {
   constructor(
-    @InjectRepository(Project)
-    private readonly projectRepo: Repository<Project>,
+    @Inject('IProjectRepository')
+    private readonly projectRepo: IProjectRepository,
   ) {}
 
   async execute(input: StartProjectDto) {
-    const project = await this.projectRepo.findOneOrFail({
-      where: { id: input.id },
-    })
+    const project = await this.projectRepo.findById(input.id)
     project.start(input.startedAt)
-    return await this.projectRepo.save(project)
+    await this.projectRepo.update(project)
+    return project
     // if (input.cancelledAt) {
     //   if (project.status === ProjectStatus.Completed) {
     //     throw new Error('Cannot cancel completed project.')

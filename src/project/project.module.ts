@@ -6,6 +6,7 @@ import { CreateProjectUseCase } from './use-cases/create-project.use-case'
 import { ProjectWithUseCaseController } from './project-with-use-case.controller'
 import { FindAllProjectsUseCase } from './use-cases/find-all-projects.use-case'
 import { StartProjectUseCase } from './use-cases/start-project.use-case'
+import { ProjectTypeOrmRepository } from './repositories/project-type-orm.repository'
 
 @Module({
   imports: [TypeOrmModule.forFeature([Project])],
@@ -15,6 +16,11 @@ import { StartProjectUseCase } from './use-cases/start-project.use-case'
     FindAllProjectsUseCase,
     CreateProjectUseCase,
     StartProjectUseCase,
+    ProjectTypeOrmRepository,
+    {
+      provide: 'IProjectRepository',
+      useExisting: ProjectTypeOrmRepository,
+    },
   ],
 })
 export class ProjectModule {}
